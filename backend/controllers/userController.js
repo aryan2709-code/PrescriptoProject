@@ -94,4 +94,6 @@ const loginUser = async (req,res) => {
     }
 }
 
+// API to 
+
 export {registerUser,loginUser};

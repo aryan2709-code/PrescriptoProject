@@ -1,6 +1,14 @@
+import { useContext } from "react";
 import { useState } from "react";
+import axios from "axios";
+import { AppContext } from "../context/AppContext";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+    const {backendUrl, token, setToken} = useContext(AppContext);
+    const navigate = useNavigate();
     const [state, setState] = useState("Sign Up");
 
     const [email,setEmail] = useState("");
@@ -9,7 +17,46 @@ const Login = () => {
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
+
+        try {
+            if(state === "Sign Up")
+            {
+                 const {data} = await axios.post(backendUrl + "/api/user/register" , {name,password,email})
+                 if(data.success)
+                 {
+                    localStorage.setItem("token",data.token)
+                    setToken(data.token)
+                 }
+                 else
+                 {
+                    toast.error(data.message)
+                 }    
+            }
+            else
+            {
+                 const {data} = await axios.post(backendUrl + "/api/user/login" , {password,email})
+                 if(data.success)
+                 {
+                    localStorage.setItem("token",data.token)
+                    setToken(data.token)
+                 }
+                 else
+                 {
+                    toast.error(data.message)
+                 }  
+            }
+        } catch (error) {
+            console.log(error)
+            toast.error(error.message)
+        }
     }
+
+    useEffect(() => {
+      if(token)
+      {
+        navigate("/");
+      }
+    },[token])
 
     return (
         <form onSubmit={onSubmitHandler}  className="min-h-[80vh] flex items-center">
