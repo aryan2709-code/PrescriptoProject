@@ -1,19 +1,19 @@
 import jwt from "jsonwebtoken";
 
-// User authentication middleware
-const authUser = async (req , res , next) => {
+// Doctor authentication middleware
+const authDoctor = async (req , res , next) => {
     try {
-        const {token} = req.headers;
-        if(!token)
+        const {dtoken} = req.headers;
+        if(!dtoken)
         {
             return res.json({
                 success : false,
                 message : "Not authorized, try again."
             })
         }
-        const token_decode = jwt.verify(token,process.env.JWT_SECRET)
+        const token_decode = jwt.verify(dtoken,process.env.JWT_SECRET)
         req.body = req.body || {};
-        req.body.userId = token_decode.id; // Modifying the request object
+        req.body.docId = token_decode.id; // Modifying the request object
         next();
     } catch (error) {
         console.log(error);
@@ -21,4 +21,4 @@ const authUser = async (req , res , next) => {
     }
 }
 
-export default authUser;
+export default authDoctor;
